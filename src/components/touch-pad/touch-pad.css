@@ -1,0 +1,36 @@
+.touchPad {
+  width: min(90vw,90vh);
+  height: min(calc(90vw - 20px),calc(90vh - 20px));
+  background: lightblue;
+  margin: auto;
+  border: 3px solid gray;
+  border-radius: 10px;
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: column;
+  font-size: 26px;
+}
+
+
+.touchPad .osd {
+  gap: 20px;
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.touchPad .arrows {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: gray;
+}
+
+.touchPad .arrows label {
+  margin: 0 20px;
+  font-size: 56px;
+  font-weight: 700;
+  color: whitesmoke;
+}

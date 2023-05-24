@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+
+footer {
+  text-align: right;
+  padding: 0 20px;
+}

@@ -19,12 +19,19 @@
     "workbox-strategies": "^6.5.4",
     "workbox-streams": "^6.5.4"
   },
+  "devDependencies": {
+    "eslint-plugin-react": "7.32.2"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
+    "globals": {
+      "window": "readonly",
+      "screen": "readonly"
+    },
     "extends": [
       "react-app",
       "react-app/jest"

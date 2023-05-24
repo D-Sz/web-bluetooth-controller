@@ -1,12 +1,15 @@
 import React from 'react';
 import './App.css';
+import { TouchPad } from '../touch-pad/touch-pad';
 
 function App() {
   return (
-    <div className="">
-    <header className="">
+    <div className="container">
+
+    <TouchPad />
+    <footer >
       #web-bluetooth-controller
-    </header>
+    </footer>
   </div>
   );
 }
