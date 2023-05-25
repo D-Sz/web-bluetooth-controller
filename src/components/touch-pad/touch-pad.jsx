@@ -1,7 +1,8 @@
 import React, {useState } from "react";
 import { useCallback } from "react";
 import './touch-pad.css';
-import bleIcon from '../../assets/bluetooth.png';
+import { BleButton } from "../ble-button/ble-button";
+import { Osd } from "../osd/osd";
 
 const POWER_PADDING = 30;
 
@@ -19,6 +20,9 @@ export function TouchPad() {
   const onTouchMove = useCallback((event) => {
     const  {offsetTop, offsetLeft,offsetWidth, offsetHeight } = event.nativeEvent.target;
     const {pageX, pageY} = event.nativeEvent.touches[0];
+
+console.log('pageY', pageY, 'offsetTop', offsetTop, 'offsetHeight', offsetHeight);
+
     let power = Math.floor( (offsetHeight - pageY + offsetTop - POWER_PADDING) / (offsetHeight-2 * POWER_PADDING) * 100);
     power = power < 0 ? 0 : power;
     power = power > 100 ? 100 : power;
@@ -37,18 +41,12 @@ export function TouchPad() {
       onTouchMove={onTouchMove}
       onTouchEnd={onTouchEnd}
       >
-      <div></div>
+      <BleButton />
       <div className="direction">
         <label style={{visibility: direction == 'left' ? 'visible' : 'hidden' }}> turn left </label>
         <label style={{visibility: direction == 'right' ? 'visible' : 'hidden' }}>	turn right </label>
       </div>
-     
-      <img src={bleIcon} className="bleButton" alt="bluetooth" />
-    
-      <div className="osd">
-        <label className="power" >  { `power: ${power}%` }</label>
-        <label className="battery" >  { `battery: ${battery}%` }</label>
-      </div>
+     <Osd power={power} battery={battery} />
       <div className="hints">
         <label>accelerate</label> 
         <label>  &#x2191;</label> 

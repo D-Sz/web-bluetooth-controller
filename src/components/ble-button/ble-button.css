@@ -1,0 +1,11 @@
+.bleButton {
+  width: 40px;
+  border: 4px solid gray;
+  border-radius: 32px;
+  padding: 5px;
+  cursor: pointer;
+  background: green;
+  position: absolute;
+  top: -20px;
+  left: calc(50% - 20px);
+}

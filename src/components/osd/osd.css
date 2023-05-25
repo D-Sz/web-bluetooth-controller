@@ -1,0 +1,11 @@
+.touchPad .osd {
+  gap: 20px;
+  display: flex;
+  align-items: stretch;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.touchPad .osd label {
+  margin: 0 20px;
+}
