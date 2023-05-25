@@ -9,6 +9,8 @@
   justify-content: flex-start;
   flex-direction: column;
   font-size: 26px;
+
+  position: relative;
 }
 
 
@@ -17,20 +19,36 @@
   display: flex;
   align-items: stretch;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
+}
+
+.touchPad .osd label {
+  margin: 0 20px;
 }
 
 .touchPad .arrows {
-  display: flex;
+   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  -webkit-text-stroke-width: 2px;
-  -webkit-text-stroke-color: gray;
+  /*-webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: gray; */
 }
 
 .touchPad .arrows label {
-  margin: 0 20px;
-  font-size: 56px;
+   margin: 0 20px;
+  /* font-size: 56px;
   font-weight: 700;
-  color: whitesmoke;
+  color: whitesmoke; */
+}
+
+.bleButton {
+  width: 40px;
+  border: 4px solid gray;
+  border-radius: 32px;
+  padding: 5px;
+  cursor: pointer;
+  background: green;
+  position: absolute;
+  top: -20px;
+  left: calc(50% - 20px);
 }
