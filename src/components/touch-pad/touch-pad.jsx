@@ -38,19 +38,25 @@ export function TouchPad() {
       onTouchEnd={onTouchEnd}
       >
       <div></div>
-      <div className="arrows">
-        {/* <label style={{visibility: direction == 'left' ? 'visible' : 'hidden' }}>	&#x2B05; </label>
-        <label style={{visibility: direction == 'right' ? 'visible' : 'hidden' }}>	&#x27A1; </label> */}
+      <div className="direction">
         <label style={{visibility: direction == 'left' ? 'visible' : 'hidden' }}> turn left </label>
         <label style={{visibility: direction == 'right' ? 'visible' : 'hidden' }}>	turn right </label>
       </div>
      
-       <img src={bleIcon} className="bleButton" alt="bluetooth" />
+      <img src={bleIcon} className="bleButton" alt="bluetooth" />
     
       <div className="osd">
         <label className="power" >  { `power: ${power}%` }</label>
         <label className="battery" >  { `battery: ${battery}%` }</label>
       </div>
+      <div className="hints">
+        <label>accelerate</label> 
+        <label>  &#x2191;</label> 
+        <label>&#x2B05; turn &#x27A1;</label> 
+        <label>&#x2193; </label> 
+        <label>break</label> 
+      </div>
+
     </div>
   );
 

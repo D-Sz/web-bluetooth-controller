@@ -26,7 +26,7 @@
   margin: 0 20px;
 }
 
-.touchPad .arrows {
+.touchPad .direction {
    display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -34,7 +34,7 @@
   -webkit-text-stroke-color: gray; */
 }
 
-.touchPad .arrows label {
+.touchPad .direction label {
    margin: 0 20px;
   /* font-size: 56px;
   font-weight: 700;
@@ -51,4 +51,13 @@
   position: absolute;
   top: -20px;
   left: calc(50% - 20px);
+}
+
+.hints {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 40px;
+  color: gray;
+  font-size: 24px;
 }
