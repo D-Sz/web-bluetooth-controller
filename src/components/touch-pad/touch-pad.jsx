@@ -21,8 +21,6 @@ export function TouchPad() {
     const  {offsetTop, offsetLeft,offsetWidth, offsetHeight } = event.nativeEvent.target;
     const {pageX, pageY} = event.nativeEvent.touches[0];
 
-console.log('pageY', pageY, 'offsetTop', offsetTop, 'offsetHeight', offsetHeight);
-
     let power = Math.floor( (offsetHeight - pageY + offsetTop - POWER_PADDING) / (offsetHeight-2 * POWER_PADDING) * 100);
     power = power < 0 ? 0 : power;
     power = power > 100 ? 100 : power;
@@ -46,7 +44,7 @@ console.log('pageY', pageY, 'offsetTop', offsetTop, 'offsetHeight', offsetHeight
         <label style={{visibility: direction == 'left' ? 'visible' : 'hidden' }}> turn left </label>
         <label style={{visibility: direction == 'right' ? 'visible' : 'hidden' }}>	turn right </label>
       </div>
-     <Osd power={power} battery={battery} />
+     <Osd power={power}  />
       <div className="hints">
         <label>accelerate</label> 
         <label>  &#x2191;</label> 
