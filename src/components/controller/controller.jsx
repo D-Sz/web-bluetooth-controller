@@ -1,19 +1,33 @@
-import React, { createContext, useState }  from 'react';
-import { connectBLE } from '../../ble-service';
+import React, { createContext, useState } from "react";
+import { connectBLE } from "../../ble-service";
+import { DeviceState, Direction } from "../../enums";
 
 export const DataContext = createContext(null);
 
-export const  BleController =  ({children, init}) => {
-  
-  const [data, setData] = useState({battery:0});
+export const BleController = ({ children }) => {
+  const [batteryLevel, setBatteryLevel] = useState(0);
+  const [power, setPower] = useState(0);
+  const [direction, setDirection] = useState(Direction.NONE);
+  const [deviceState, setDeviceState] = useState(DeviceState.DISCONNECTED);
 
   const onStart = () => {
-    connectBLE({setData});
-  }
+    connectBLE({ setBatteryLevel, setDeviceState });
+  };
 
   return (
-    <DataContext.Provider value={{...data, onStart}} >
+    <DataContext.Provider
+      value={{
+        batteryLevel,
+        onStart,
+        onSetPower: setPower,
+        onSetDirection: setDirection,
+        power,
+        direction,
+        deviceState,
+        setDeviceState,
+      }}
+    >
       {children}
     </DataContext.Provider>
-  )
-}
+  );
+};
