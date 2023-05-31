@@ -15,6 +15,7 @@ const disconnect = () => {
   isConnected = false;
   console.log(`disconnected`);
   refs.setDeviceState(DeviceState.DISCONNECTED);
+  refs.setBatteryLevel(0);
 };
 
 export const connectBLE = async (args) => {
