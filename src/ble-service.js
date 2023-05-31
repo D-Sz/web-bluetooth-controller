@@ -1,20 +1,20 @@
-import { DeviceState } from "./enums";
+import { DeviceState, Direction } from "./enums";
 
 const refs = {};
+export const BleInstance = { control: () => {} };
+let isConnected = false;
+let device = null;
 
-const sleep = (time) =>
-  new Promise((resolve) => {
-    setTimeout(() => resolve(), time);
-  });
+// const sleep = (time) =>
+//   new Promise((resolve) => {
+//     setTimeout(() => resolve(), time);
+//   });
 
 const disconnect = () => {
+  device = null;
+  isConnected = false;
   console.log(`disconnected`);
   refs.setDeviceState(DeviceState.DISCONNECTED);
-};
-
-const catchError = (error) => {
-  console.log(`error:`, error);
-  disconnect();
 };
 
 export const connectBLE = async (args) => {
@@ -22,114 +22,81 @@ export const connectBLE = async (args) => {
   const { setBatteryLevel, setDeviceState } = args;
   console.log(`started`);
 
-  setDeviceState(DeviceState.CONNECTING);
+  if (device) {
+    device.gatt.disconnect();
+    disconnect();
+    return;
+  }
 
-  const device = await navigator.bluetooth
-    .requestDevice({
-      acceptAllDevices: true,
-      // filters: [
-      //   {
-      //     namePrefix: "S",
-      //     // services: ["0000fff0-0000-1000-8000-00805f9b34fb"] ,
-      //   },
-      // ],
+  try {
+    setDeviceState(DeviceState.CONNECTING);
+
+    device = await navigator.bluetooth.requestDevice({
+      // acceptAllDevices: true,
+      filters: [
+        {
+          namePrefix: "S",
+        },
+      ],
       optionalServices: [
         0x180f, // battery service
+        0xfff0, // control service
       ],
-    })
-    .catch(catchError);
+    });
 
-  if (!device) {
-    disconnect();
-    return;
-  }
+    console.log("device connected:", device.name, device);
 
-  setDeviceState(DeviceState.CONNECTED);
+    device.addEventListener("gattserverdisconnected", (e) => {
+      console.log("device disconnected:", e);
+      disconnect();
+    });
 
-  console.log("device connected:", device.name, device);
+    const server = await device.gatt.connect();
 
-  device.addEventListener("gattserverdisconnected", (e) => {
-    console.log("device disconnected:", e);
-    disconnect();
-  });
+    console.log("gatt server:", server);
 
-  const server = await device.gatt.connect().catch(catchError);
+    const services = await server.getPrimaryServices();
+    console.log("services:", services);
 
-  console.log("gatt server:", server);
+    const batteryService = (await server.getPrimaryServices(0x180f))[0];
+    const characteristics = await batteryService.getCharacteristics();
 
-  if (!server) {
-    disconnect();
-    return;
-  }
+    console.log("battery characteristics:", characteristics);
 
-  const services = await server.getPrimaryServices().catch(catchError);
-  console.log("services:", services);
+    const batteryNotification = await characteristics[0].startNotifications();
 
-  if (!services) {
-    disconnect();
-    return;
-  }
+    batteryNotification.addEventListener("characteristicvaluechanged", (e) => {
+      const value = e.target.value;
+      console.log("battery notification:", value, value.getInt8(0));
+      setBatteryLevel(value.getInt8(0));
+    });
 
-  const batteryService = services[0];
-  const characteristics = await batteryService
-    .getCharacteristics()
-    .catch(catchError);
+    const controlService = (await server.getPrimaryServices(0xfff0))[0];
 
-  console.log("battery characteristics:", characteristics);
+    const controlCharacteristics = await controlService.getCharacteristics();
 
-  if (!characteristics) {
-    disconnect();
-    return;
-  }
+    const controlCharacteristic = controlCharacteristics[0];
 
-  const batteryNotification = await characteristics[0]
-    .startNotifications()
-    .catch(catchError);
+    let isWriteInProgress = false;
+    BleInstance.control = async function control({ direction, power }) {
+      if (isWriteInProgress || !isConnected) return;
+      const payload = new Uint8Array([
+        0x01, 0x00 /* fw */, 0x00 /* rev */, 0x00 /* left */, 0x00 /* right */,
+        0x01 /* lamp */, 0x00 /* turbo */,
+      ]);
+      if (direction === Direction.LEFT) payload[3] = 0x01;
+      else if (direction === Direction.RIGHT) payload[4] = 0x01;
+      if (power > 0) payload[1] = 0x01;
+      if (power < 0) payload[2] = 0x01;
+      isWriteInProgress = true;
+      await controlCharacteristic.writeValue(payload);
+      isWriteInProgress = false;
+    };
 
-  if (!batteryNotification) {
-    disconnect();
-    return;
-  }
-
-  batteryNotification.addEventListener("characteristicvaluechanged", (e) => {
-    const value = e.target.value;
-    console.log("battery notification:", value, value.getInt8(0));
-    setBatteryLevel(value.getInt8(0));
-  });
-
-  const controlService = services[1];
-
-  if (!controlService) {
-    disconnect();
-    return;
-  }
-
-  const controlCharacteristics = await controlService
-    .getCharacteristics()
-    .catch(catchError);
-
-  if (!controlCharacteristics) {
-    disconnect();
-    return;
-  }
-
-  const controlCharacteristic = controlCharacteristics[0];
-
-  if (!controlCharacteristic) {
-    disconnect();
-    return;
-  }
-
-  while (true) {
-    await controlCharacteristic
-      .writeValue(
-        new Uint8Array([
-          0x00, 0x00 /* fw */, 0x00 /* rev */, 0x00 /* left */,
-          0x00 /* right */, 0x01 /* lamp */,
-        ])
-      )
-      .catch(catchError);
-
-    await sleep(10);
+    setDeviceState(DeviceState.CONNECTED);
+    isConnected = true;
+  } catch (error) {
+    console.log(`error:`, error);
+    refs.setDeviceState(DeviceState.FAILED);
   }
 };

@@ -21,17 +21,20 @@ export function TouchPad() {
   const onPointerMove = useCallback((event) => {
     if (event.buttons === 0) return;
 
-    const { offsetTop, offsetLeft, offsetWidth, offsetHeight } =
-      event.nativeEvent.target;
+    const { offsetWidth, offsetHeight } = event.nativeEvent.target;
+    const { offsetTop, offsetLeft } = event.nativeEvent.target.parentElement;
+
     const { pageX, pageY } = event;
-    console.log(event);
+
     let power = Math.floor(
-      ((offsetHeight - pageY + offsetTop - POWER_PADDING) /
+      ((offsetHeight - pageY + offsetTop - offsetHeight / 2 - POWER_PADDING) /
         (offsetHeight - 2 * POWER_PADDING)) *
-        100
+        100 *
+        2
     );
-    power = power < 0 ? 0 : power;
+    power = power < -100 ? -100 : power;
     power = power > 100 ? 100 : power;
+    if (power < 20 && power > -20) power = 0;
     onSetPower(power);
 
     const x = Math.floor(((pageX - offsetLeft) / offsetWidth) * 100);
@@ -46,6 +49,7 @@ export function TouchPad() {
       className="touchPad"
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
+      onPointerOut={onPointerUp}
     >
       <div className="direction">
         <label
@@ -65,11 +69,11 @@ export function TouchPad() {
       </div>
       <Osd power={power} />
       <div className="hints">
-        <label>accelerate</label>
+        <label>forward</label>
         <label>&#x2191;</label>
         <label>&#x2B05; turn &#x27A1;</label>
         <label>&#x2193; </label>
-        <label>break</label>
+        <label>reverse</label>
       </div>
     </div>
   );

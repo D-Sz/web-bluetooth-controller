@@ -16,9 +16,13 @@
 }
 
 .DISCONNECTED {
-  background: red;
+  background: lightgray;
 }
 
 .CONNECTING {
   background: yellow;
 } 
+
+.FAILED {
+  background: red;
+}
