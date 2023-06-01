@@ -1,7 +1,7 @@
 import { DeviceState, Direction } from "./enums";
 
 const refs = {};
-export const BleInstance = { control: () => {} };
+export const BleInstance = { control: () => {}, isInitialized: false };
 let isConnected = false;
 let device = null;
 
@@ -9,6 +9,10 @@ let device = null;
 //   new Promise((resolve) => {
 //     setTimeout(() => resolve(), time);
 //   });
+
+export const initBle = async (args) => {
+  Object.assign(refs, args);
+};
 
 const disconnect = () => {
   device = null;
@@ -18,20 +22,35 @@ const disconnect = () => {
   refs.setBatteryLevel(0);
 };
 
-export const connectBLE = async (args) => {
-  Object.assign(refs, args);
-  const { setBatteryLevel, setDeviceState } = args;
-  console.log(`started`);
+export const autoConnectBLE = async () => {
+  // if (BleInstance.isInitialized) return;
+  // BleInstance.isInitialized = true;
+  let devices;
+  try {
+    devices = await navigator.bluetooth.getDevices();
+    console.log(`devices:`, devices);
+  } catch (error) {
+    console.log(`error:`, error);
+    refs.setDeviceState(DeviceState.FAILED);
+  }
+  if (devices?.length) {
+    // device = devices[0];
+    // connectBLE();
+    return devices[0];
+  }
+  return null;
+};
 
-  if (device) {
+export const scanBLE = async () => {
+  if (device && isConnected) {
     device.gatt.disconnect();
     disconnect();
     return;
   }
 
-  try {
-    setDeviceState(DeviceState.CONNECTING);
+  device = await autoConnectBLE();
 
+  if (!device) {
     device = await navigator.bluetooth.requestDevice({
       // acceptAllDevices: true,
       filters: [
@@ -44,6 +63,19 @@ export const connectBLE = async (args) => {
         0xfff0, // control service
       ],
     });
+  }
+
+  if (device) {
+    connectBLE();
+  }
+};
+
+export const connectBLE = async () => {
+  const { setBatteryLevel, setDeviceState } = refs;
+  console.log(`started`);
+
+  try {
+    setDeviceState(DeviceState.CONNECTING);
 
     console.log("device connected:", device.name, device);
 

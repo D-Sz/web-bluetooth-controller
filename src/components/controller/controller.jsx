@@ -1,5 +1,10 @@
-import React, { createContext, useRef, useState } from "react";
-import { BleInstance, connectBLE } from "../../ble-service";
+import React, { createContext, useEffect, useRef, useState } from "react";
+import {
+  BleInstance,
+  autoConnectBLE,
+  initBle,
+  scanBLE,
+} from "../../ble-service";
 import { DeviceState, Direction } from "../../enums";
 
 export const DataContext = createContext(null);
@@ -13,8 +18,13 @@ export const BleController = ({ children }) => {
   BleInstance.control({ direction, power });
 
   const onStart = () => {
-    connectBLE({ setBatteryLevel, setDeviceState });
+    scanBLE();
   };
+
+  useEffect(() => {
+    console.log(`initBle`);
+    initBle({ setBatteryLevel, setDeviceState });
+  }, []);
 
   return (
     <DataContext.Provider
