@@ -14,6 +14,7 @@ export const BleController = ({ children }) => {
   const [power, setPower] = useState(0);
   const [direction, setDirection] = useState(Direction.NONE);
   const [deviceState, setDeviceState] = useState(DeviceState.DISCONNECTED);
+  const [deviceName, setDeviceName] = useState("");
 
   BleInstance.control({ direction, power });
 
@@ -23,7 +24,7 @@ export const BleController = ({ children }) => {
 
   useEffect(() => {
     console.log(`initBle`);
-    initBle({ setBatteryLevel, setDeviceState });
+    initBle({ setBatteryLevel, setDeviceState, setDeviceName });
   }, []);
 
   return (
@@ -37,6 +38,8 @@ export const BleController = ({ children }) => {
         direction,
         deviceState,
         setDeviceState,
+        deviceName,
+        setDeviceName,
       }}
     >
       {children}

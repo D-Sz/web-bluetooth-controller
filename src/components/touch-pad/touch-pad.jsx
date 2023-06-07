@@ -10,8 +10,7 @@ const LEFT_THRESHOLD = 34;
 const RIGHT_THRESHOLD = 66;
 
 export function TouchPad() {
-  const { power, onSetPower, direction, onSetDirection } =
-    useContext(DataContext);
+  const { onSetPower, direction, onSetDirection } = useContext(DataContext);
 
   const onPointerUp = useCallback(() => {
     onSetPower(0);
@@ -67,7 +66,7 @@ export function TouchPad() {
           turn right
         </label>
       </div>
-      <Osd power={power} />
+      <Osd />
       <div className="hints">
         <label>forward</label>
         <label>&#x2191;</label>

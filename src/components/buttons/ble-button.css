@@ -21,8 +21,22 @@
 
 .CONNECTING {
   background: yellow;
+  animation: pending 1s infinite ;
 } 
 
 .FAILED {
   background: red;
 }
+
+@keyframes pending {
+  0% {
+    background-color: lightgray;
+  }
+  50% {
+    background-color: orange;
+  }
+  100% {
+    background-color: lightgray;
+  }
+}
+  

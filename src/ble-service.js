@@ -4,14 +4,25 @@ const refs = {};
 export const BleInstance = { control: () => {}, isInitialized: false };
 let isConnected = false;
 let device = null;
+let signal = null;
 
-// const sleep = (time) =>
-//   new Promise((resolve) => {
-//     setTimeout(() => resolve(), time);
-//   });
+const delay = (time) =>
+  new Promise((resolve) => {
+    setTimeout(() => resolve("timeout"), time);
+  });
 
 export const initBle = async (args) => {
   Object.assign(refs, args);
+
+  if (BleInstance.isInitialized) {
+    console.log(`BLE already initialized`);
+    return;
+  }
+  BleInstance.isInitialized = true;
+  device = await autoConnectBLE();
+  if (device) {
+    connectBLE();
+  }
 };
 
 const disconnect = () => {
@@ -20,24 +31,47 @@ const disconnect = () => {
   console.log(`disconnected`);
   refs.setDeviceState(DeviceState.DISCONNECTED);
   refs.setBatteryLevel(0);
+  refs.setDeviceName("");
 };
 
 export const autoConnectBLE = async () => {
-  // if (BleInstance.isInitialized) return;
-  // BleInstance.isInitialized = true;
   let devices;
+  console.log(`starting autoConnectBLE`);
   try {
     devices = await navigator.bluetooth.getDevices();
     console.log(`devices:`, devices);
   } catch (error) {
     console.log(`error:`, error);
-    refs.setDeviceState(DeviceState.FAILED);
   }
   if (devices?.length) {
-    // device = devices[0];
-    // connectBLE();
-    return devices[0];
+    const savedDevice = devices[0];
+    refs.setDeviceState(DeviceState.CONNECTING);
+    refs.setDeviceName(savedDevice.name);
+
+    const waitForAdvertisement = () =>
+      new Promise((resolve, reject) => {
+        savedDevice.onadvertisementreceived = (event) => {
+          console.log(`advertisement received:`, event);
+          resolve(event);
+        };
+      });
+
+    signal = new AbortController();
+    await savedDevice
+      .watchAdvertisements({ signal: signal.signal })
+      .catch((error) => {
+        console.log(`watch advertisements error:`, error);
+      });
+
+    const result = await Promise.race([waitForAdvertisement(), delay(4000)]);
+    console.log(`received advertisement:`, result);
+    signal.abort();
+    if (result !== "timeout") {
+      return savedDevice;
+    }
   }
+
+  refs.setDeviceState(DeviceState.FAILED);
   return null;
 };
 
@@ -47,8 +81,6 @@ export const scanBLE = async () => {
     disconnect();
     return;
   }
-
-  device = await autoConnectBLE();
 
   if (!device) {
     device = await navigator.bluetooth.requestDevice({
@@ -72,7 +104,7 @@ export const scanBLE = async () => {
 
 export const connectBLE = async () => {
   const { setBatteryLevel, setDeviceState } = refs;
-  console.log(`started`);
+  console.log(`starting connectBLE`);
 
   try {
     setDeviceState(DeviceState.CONNECTING);
@@ -127,6 +159,7 @@ export const connectBLE = async () => {
     };
 
     setDeviceState(DeviceState.CONNECTED);
+    refs.setDeviceName(device.name);
     isConnected = true;
   } catch (error) {
     console.log(`error:`, error);
