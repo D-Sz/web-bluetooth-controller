@@ -1,6 +1,6 @@
 {
   "name": "web-bluetooth-controller",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "dependencies": {
     "react": "^18.2.0",
@@ -24,7 +24,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "set BUILD_PATH=./gh-pages && react-scripts build",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
