@@ -2,10 +2,11 @@ import React from "react";
 import "./App.css";
 import { TouchPad } from "../touch-pad/touch-pad";
 import { BleController } from "../controller/controller";
-import * as packageJson from "../../../package.json";
+import packageJson from "../../../package.json";
 import { BleButton } from "../buttons/ble-button";
 
-const { version } = packageJson;
+const packageData = packageJson;
+const { version } = packageData;
 
 function App() {
   return (
