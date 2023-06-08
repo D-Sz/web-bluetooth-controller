@@ -1,0 +1,16 @@
+{
+  "files": {
+    "main.css": "/static/css/main.f28d6be5.css",
+    "main.js": "/static/js/main.adbc1625.js",
+    "static/media/AmaticSC-Regular.woff": "/static/media/AmaticSC-Regular.fc80d8ee8a092e4e54ce.woff",
+    "service-worker.js": "/service-worker.js",
+    "static/media/bluetooth.png": "/static/media/bluetooth.6b48b2a27997bb8bad09.png",
+    "index.html": "/index.html",
+    "main.f28d6be5.css.map": "/static/css/main.f28d6be5.css.map",
+    "main.adbc1625.js.map": "/static/js/main.adbc1625.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.f28d6be5.css",
+    "static/js/main.adbc1625.js"
+  ]
+}
