@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { useCallback } from "react";
 import "./touch-pad.css";
 import { Osd } from "../osd/osd";
@@ -53,15 +53,18 @@ export function TouchPad() {
     });
   }, []);
 
+  const ref = useRef(null);
+
   useEffect(() => {
-    document.addEventListener("touchmove", onTouchMove, { passive: false });
+    ref.current.addEventListener("touchmove", onTouchMove, { passive: false });
     return () => {
-      document.removeEventListener("touchmove", onTouchMove);
+      ref.current.removeEventListener("touchmove", onTouchMove);
     };
   }, []);
 
   return (
     <div
+      ref={ref}
       className="touchPad"
       onMouseMove={onMouseMove}
       onMouseUp={onPointerUp}
