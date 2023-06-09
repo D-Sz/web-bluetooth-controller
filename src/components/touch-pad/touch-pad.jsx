@@ -92,7 +92,7 @@ export function TouchPad() {
         <label>forward</label>
         <label>&#x2191;</label>
         <label>&#x2B05; turn &#x27A1;</label>
-        <label>&#x2193; </label>
+        <label>&#x2193;</label>
         <label>reverse</label>
       </div>
     </div>
