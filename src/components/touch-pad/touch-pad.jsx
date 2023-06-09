@@ -17,13 +17,9 @@ export function TouchPad() {
     onSetDirection(Direction.NONE);
   }, []);
 
-  const onPointerMove = useCallback((event) => {
-    if (event.buttons === 0) return;
-
-    const { offsetWidth, offsetHeight } = event.nativeEvent.target;
-    const { offsetTop, offsetLeft } = event.nativeEvent.target.parentElement;
-
-    const { pageX, pageY } = event;
+  const onMove = useCallback(({ pageX, pageY, target }) => {
+    const { offsetWidth, offsetHeight } = target;
+    const { offsetTop, offsetLeft } = target.parentElement;
 
     let power = Math.floor(
       ((offsetHeight - pageY + offsetTop - offsetHeight / 2 - POWER_PADDING) /
@@ -43,12 +39,27 @@ export function TouchPad() {
     onSetDirection(direction);
   }, []);
 
+  const onMouseMove = useCallback((event) => {
+    if (!event.buttons) return;
+    onMove({ pageX: event.pageX, pageY: event.pageY, target: event.target });
+  }, []);
+
+  const onTouchMove = useCallback((event) => {
+    onMove({
+      pageX: event.touches[0].pageX,
+      pageY: event.touches[0].pageY,
+      target: event.target,
+    });
+  }, []);
+
   return (
     <div
       className="touchPad"
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerOut={onPointerUp}
+      onTouchMove={onTouchMove}
+      onMouseMove={onMouseMove}
+      onMouseUp={onPointerUp}
+      onMouseOut={onPointerUp}
+      onTouchEnd={onPointerUp}
     >
       <div className="direction">
         <label
