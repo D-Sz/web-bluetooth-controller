@@ -83,22 +83,26 @@ export const scanBLE = async () => {
   }
 
   if (!device) {
-    device = await navigator.bluetooth.requestDevice({
-      // acceptAllDevices: true,
-      filters: [
-        {
-          namePrefix: "S",
-        },
-      ],
-      optionalServices: [
-        0x180f, // battery service
-        0xfff0, // control service
-      ],
-    });
-  }
+    try {
+      device = await navigator.bluetooth.requestDevice({
+        // acceptAllDevices: true,
+        filters: [
+          {
+            namePrefix: "S",
+          },
+        ],
+        optionalServices: [
+          0x180f, // battery service
+          0xfff0, // control service
+        ],
+      });
+    } catch (error) {
+      console.log(`requestDevice error:`, error);
+    }
 
-  if (device) {
-    connectBLE();
+    if (device) {
+      connectBLE();
+    }
   }
 };
 
