@@ -1,10 +1,5 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
-import {
-  BleInstance,
-  autoConnectBLE,
-  initBle,
-  scanBLE,
-} from "../../ble-service";
+import React, { createContext, useEffect, useState } from "react";
+import { BleInstance, initBle, scanBLE } from "../../ble-service";
 import { DeviceState, Direction } from "../../enums";
 
 export const DataContext = createContext(null);
