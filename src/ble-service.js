@@ -4,7 +4,6 @@ const refs = {};
 export const BleInstance = { control: () => {}, isInitialized: false };
 let isConnected = false;
 let device = null;
-let signal = null;
 
 const delay = (time) =>
   new Promise((resolve) => {
@@ -39,9 +38,9 @@ export const autoConnectBLE = async () => {
   console.log(`starting autoConnectBLE`);
   try {
     devices = await navigator.bluetooth.getDevices();
-    console.log(`devices:`, devices);
+    console.log("devices:", devices);
   } catch (error) {
-    console.log(`error:`, error);
+    console.log("error:", error);
   }
   if (devices?.length) {
     const savedDevice = devices[0];
@@ -56,7 +55,7 @@ export const autoConnectBLE = async () => {
         };
       });
 
-    signal = new AbortController();
+    const signal = new AbortController();
     await savedDevice
       .watchAdvertisements({ signal: signal.signal })
       .catch((error) => {
@@ -90,6 +89,14 @@ export const scanBLE = async () => {
           {
             namePrefix: "S",
           },
+          // {
+          //   services: [
+          //     // "0000fff0-0000-1000-8000-00805f9b34fb",
+          //     // "0000180f-0000-1000-8000-00805f9b34fb",
+          //     0x180f, // battery service
+          //     0xfff0, // control service
+          //   ],
+          // },
         ],
         optionalServices: [
           0x180f, // battery service
@@ -133,6 +140,9 @@ export const connectBLE = async () => {
     console.log("battery characteristics:", characteristics);
 
     const batteryNotification = await characteristics[0].startNotifications();
+
+    const batteryLevel = await batteryNotification.readValue();
+    console.log("battery level:", batteryLevel, batteryLevel.getInt8(0));
 
     batteryNotification.addEventListener("characteristicvaluechanged", (e) => {
       const value = e.target.value;

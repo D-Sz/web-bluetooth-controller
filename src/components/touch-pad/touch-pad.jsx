@@ -53,8 +53,7 @@ export function TouchPad() {
     });
   }, []);
 
-  const ref = useRef(null);
-
+  const ref = useRef(document.body);
   useEffect(() => {
     ref.current.addEventListener("touchmove", onTouchMove, { passive: false });
     return () => {
@@ -64,7 +63,6 @@ export function TouchPad() {
 
   return (
     <div
-      ref={ref}
       className="touchPad"
       onMouseMove={onMouseMove}
       onMouseUp={onPointerUp}
