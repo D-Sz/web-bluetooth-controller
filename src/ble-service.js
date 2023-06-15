@@ -143,6 +143,7 @@ export const connectBLE = async () => {
 
     const batteryLevel = await batteryNotification.readValue();
     console.log("battery level:", batteryLevel, batteryLevel.getInt8(0));
+    setBatteryLevel(batteryLevel.getInt8(0));
 
     batteryNotification.addEventListener("characteristicvaluechanged", (e) => {
       const value = e.target.value;
